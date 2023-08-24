@@ -39,7 +39,7 @@ void uart_callback(UartIrqEvent event, uint8_t data, void* context) {
             furi_mutex_release(app->mutex);
 
             if(data == MH_Z19_START_BYTE && byte_count != 1) {
-                furi_stream_buffer_reset(app->rx_stream); 
+                furi_stream_buffer_reset(app->rx_stream);
                 furi_stream_buffer_send(app->rx_stream, &data, 1, 0);
             } else if(byte_count == MH_Z19_COMMAND_SIZE) {
                 furi_thread_flags_set(furi_thread_get_id(app->worker_thread), WorkerEventReserved);
