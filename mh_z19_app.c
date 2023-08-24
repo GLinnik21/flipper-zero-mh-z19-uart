@@ -5,7 +5,7 @@
 
 #include "mh_z19_app.h"
 #include "mh_z19_ui.h"
-#include "hello_world_uart.h"
+#include "mh_z19_uart.h"
 
 #include "mh_z19_uart_tools.h"
 
