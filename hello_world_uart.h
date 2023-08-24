@@ -1,6 +1,6 @@
 #pragma once
 
-#include "hello_world.h"
+#include "mh_z19_app.h"
 
 void uart_callback(UartIrqEvent event, uint8_t data, void* context);
 int32_t uart_listener_worker(void* context);

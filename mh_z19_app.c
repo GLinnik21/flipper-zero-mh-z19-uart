@@ -3,7 +3,7 @@
 #include <furi_hal_uart.h>
 #include <furi_hal_console.h>
 
-#include "hello_world.h"
+#include "mh_z19_app.h"
 #include "hello_world_ui.h"
 #include "hello_world_uart.h"
 
