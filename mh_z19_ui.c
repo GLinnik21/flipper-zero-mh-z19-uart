@@ -1,4 +1,4 @@
-#include "hello_world_ui.h"
+#include "mh_z19_ui.h"
 
 void input_callback(InputEvent* event, void* context) {
     furi_assert(context);

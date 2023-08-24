@@ -4,7 +4,7 @@
 #include <furi_hal_console.h>
 
 #include "mh_z19_app.h"
-#include "hello_world_ui.h"
+#include "mh_z19_ui.h"
 #include "hello_world_uart.h"
 
 #include "mh_z19_uart_tools.h"
