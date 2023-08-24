@@ -4,33 +4,33 @@
 
 #include "mh_z19_uart_tools.h"
 
-void uart_init(HelloWorldContext* context) {
-    context->uart_state = HelloWorldUartStateWaitStart;
+void uart_init(MhZ19App* app) {
+    app->uart_state = MhZ19UartStateWaitStart;
     furi_hal_console_disable();
-    furi_hal_uart_deinit((context->uart_channel = FuriHalUartIdUSART1));
-    furi_hal_uart_init(context->uart_channel, MH_Z19_BAUDRATE);
-    furi_hal_uart_set_irq_cb(context->uart_channel, uart_callback, context);
+    furi_hal_uart_deinit((app->uart_channel = FuriHalUartIdUSART1));
+    furi_hal_uart_init(app->uart_channel, MH_Z19_BAUDRATE);
+    furi_hal_uart_set_irq_cb(app->uart_channel, uart_callback, app);
 }
 
-void uart_deinit(HelloWorldContext* context) {
+void uart_deinit(MhZ19App* app) {
     furi_hal_console_enable();
-    furi_hal_uart_deinit(context->uart_channel);
+    furi_hal_uart_deinit(app->uart_channel);
 }
 
 void uart_callback(UartIrqEvent event, uint8_t data, void* context) {
     furi_assert(context);
-    HelloWorldContext* app = context;
+    MhZ19App* app = context;
 
     if(event == UartIrqEventRXNE) {
         switch(app->uart_state) {
-        case HelloWorldUartStateWaitStart:
+        case MhZ19UartStateWaitStart:
             if(data == MH_Z19_START_BYTE) {
                 furi_stream_buffer_send(app->rx_stream, &data, 1, 0);
-                app->uart_state = HelloWorldUartStateCollectPacket;
+                app->uart_state = MhZ19UartStateCollectPacket;
             }
             break;
 
-        case HelloWorldUartStateCollectPacket:
+        case MhZ19UartStateCollectPacket:
             furi_stream_buffer_send(app->rx_stream, &data, 1, 0);
 
             static size_t byte_count = 0;
@@ -43,7 +43,7 @@ void uart_callback(UartIrqEvent event, uint8_t data, void* context) {
                 furi_stream_buffer_send(app->rx_stream, &data, 1, 0);
             } else if(byte_count == MH_Z19_COMMAND_SIZE) {
                 furi_thread_flags_set(furi_thread_get_id(app->worker_thread), WorkerEventReserved);
-                app->uart_state = HelloWorldUartStateWaitStart;
+                app->uart_state = MhZ19UartStateWaitStart;
             }
             break;
         }
@@ -51,7 +51,7 @@ void uart_callback(UartIrqEvent event, uint8_t data, void* context) {
 }
 
 int32_t uart_listener_worker(void* context) {
-    HelloWorldContext* app = context;
+    MhZ19App* app = context;
     static uint8_t data[9] = {0};
     static size_t length = 0;
 

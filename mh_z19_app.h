@@ -4,28 +4,28 @@
 #include <furi_hal_uart.h>
 #include <gui/gui.h>
 
-typedef enum HelloWorldUartState {
-    HelloWorldUartStateWaitStart,
-    HelloWorldUartStateCollectPacket,
-} HelloWorldUartState;
+typedef enum MhZ19UartState {
+    MhZ19UartStateWaitStart,
+    MhZ19UartStateCollectPacket,
+} MhZ19UartState;
 
-typedef struct HelloWorldContext {
+typedef struct MhZ19App {
     FuriMessageQueue* event_queue;
     ViewPort* view_port;
     Gui* gui;
     FuriHalUartId uart_channel;
-    HelloWorldUartState uart_state;
+    MhZ19UartState uart_state;
     FuriStreamBuffer* rx_stream;
     FuriMutex* mutex;
     FuriThread* worker_thread;
     uint32_t ppm;
-} HelloWorldContext;
+} MhZ19App;
 
-typedef enum WorkerEventFlags {
+typedef enum MhZ19WorkerEventFlags {
     WorkerEventReserved = (1 << 0),
     WorkerEventStop = (1 << 1),
-} WorkerEventFlags;
+} MhZ19WorkerEventFlags;
 
-HelloWorldContext* mh_z19_app_context_init();
-void mh_z19_app_context_free(HelloWorldContext* context);
+MhZ19App* mh_z19_app_context_init();
+void mh_z19_app_context_free(MhZ19App* context);
 int32_t mh_z19_app(void* p);

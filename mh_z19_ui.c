@@ -2,15 +2,15 @@
 
 void input_callback(InputEvent* event, void* context) {
     furi_assert(context);
-    HelloWorldContext* hello_context = context;
+    MhZ19App* app = context;
 
-    furi_message_queue_put(hello_context->event_queue, event, FuriWaitForever);
+    furi_message_queue_put(app->event_queue, event, FuriWaitForever);
 }
 
 void draw_callback(Canvas* canvas, void* context) {
     furi_assert(context);
 
-    HelloWorldContext* app = context;
+    MhZ19App* app = context;
     canvas_clear(canvas);
     canvas_set_font(canvas, FontPrimary);
     static char buffer[50];

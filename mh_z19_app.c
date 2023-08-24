@@ -9,7 +9,7 @@
 
 #include "mh_z19_uart_tools.h"
 
-static void mh_z19_app_run(HelloWorldContext* const context) {
+static void mh_z19_app_run(MhZ19App* const context) {
     for(bool isRunning = true; isRunning;) {
         InputEvent event;
         const FuriStatus status =
@@ -36,8 +36,8 @@ static void mh_z19_app_run(HelloWorldContext* const context) {
     }
 }
 
-HelloWorldContext* mh_z19_app_context_init() {
-    HelloWorldContext* context = (HelloWorldContext*)malloc(sizeof(HelloWorldContext));
+MhZ19App* mh_z19_app_context_init() {
+    MhZ19App* context = (MhZ19App*)malloc(sizeof(MhZ19App));
 
     context->event_queue = furi_message_queue_alloc(8, sizeof(InputEvent));
 
@@ -63,7 +63,7 @@ HelloWorldContext* mh_z19_app_context_init() {
     return context;
 }
 
-void mh_z19_app_context_free(HelloWorldContext* context) {
+void mh_z19_app_context_free(MhZ19App* context) {
     furi_thread_flags_set(furi_thread_get_id(context->worker_thread), WorkerEventStop);
     furi_thread_join(context->worker_thread);
     furi_thread_free(context->worker_thread);
@@ -87,7 +87,7 @@ void mh_z19_app_context_free(HelloWorldContext* context) {
 int32_t mh_z19_app(void* p) {
     UNUSED(p);
 
-    HelloWorldContext* context = mh_z19_app_context_init();
+    MhZ19App* context = mh_z19_app_context_init();
     mh_z19_app_run(context);
     mh_z19_app_context_free(context);
 
