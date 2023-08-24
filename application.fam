@@ -1,14 +1,17 @@
 App(
-    appid="hello_world",
-    name="Hello World",
+    appid="mh_z19_uart",
+    name="CO2 Module (MH-Z19)",
     apptype=FlipperAppType.EXTERNAL,
-    entry_point="hello_world_app",
-    cdefines=["APP_HELLO_WORLD"],
-    requires=[
-        "gui",
-    ],
+    entry_point="mh_z19_app",
+    requires=["gui"],
     stack_size=1 * 1024,
     order=90,
-	fap_icon="hello_world.png",
-    fap_category="Misc",
+    fap_private_libs=[Lib(name="mh_z19_uart_tools")],
+	fap_icon="assets/co2_icon.png",
+    fap_icon_assets="assets",
+    fap_category="GPIO",
+    fap_description="Read the CO2 concentration from the MH-Z19 sensor via UART interface",
+    fap_author="glinnik21",
+    fap_weburl="https://github.com/GLinnik21/flipper-zero-mh-z19-uart",
+    fap_version=(0, 1)
 )
