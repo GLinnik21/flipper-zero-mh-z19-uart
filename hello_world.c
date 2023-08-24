@@ -7,7 +7,7 @@
 #include "hello_world_ui.h"
 #include "hello_world_uart.h"
 
-#include "mhz19_uart_tools.h"
+#include "mh_z19_uart_tools.h"
 
 static void hello_world_app_run(HelloWorldContext* const context) {
     for(bool isRunning = true; isRunning;) {
@@ -20,7 +20,7 @@ static void hello_world_app_run(HelloWorldContext* const context) {
         }
 
         static uint8_t data[9] = {0};
-        mhz19_uart_read_co2(data);
+        mh_z19_uart_read_co2(data);
 
         switch(event.key) {
         case InputKeyBack:

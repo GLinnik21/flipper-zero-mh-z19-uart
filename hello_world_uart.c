@@ -2,7 +2,7 @@
 #include <furi_hal_uart.h>
 #include <furi_hal_console.h>
 
-#include "mhz19_uart_tools.h"
+#include "mh_z19_uart_tools.h"
 
 void uart_init(HelloWorldContext* context) {
     context->uart_state = HelloWorldUartStateWaitStart;
@@ -65,7 +65,7 @@ int32_t uart_listener_worker(void* context) {
             furi_mutex_acquire(app->mutex, FuriWaitForever);
             length = furi_stream_buffer_receive(app->rx_stream, data, MH_Z19_COMMAND_SIZE, 0);
             if(length == MH_Z19_COMMAND_SIZE) {
-                app->ppm = mhz19_decode_co2_concentration(data);
+                app->ppm = mh_z19_decode_co2_concentration(data);
             }
             furi_mutex_release(app->mutex);
         }

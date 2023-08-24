@@ -30,7 +30,7 @@ typedef enum {
  * @param packet Pointer to the packet of size 9 bytes.
  * @return uint8_t Calculated checksum.
  */
-uint8_t mhz19_uart_checksum(const uint8_t* packet);
+uint8_t mh_z19_uart_checksum(const uint8_t* packet);
 
 /**
  * @brief Prepare an arbitrary command to be sent to the sensor.
@@ -43,7 +43,7 @@ uint8_t mhz19_uart_checksum(const uint8_t* packet);
  * @param data_length Length of the data to be included (should be <= 6).
  * @param command Pointer to the command buffer of size 9 bytes where the final command will be stored.
  */
-void mhz19_uart_send_arbitrary_command(
+void mh_z19_uart_send_arbitrary_command(
     uint8_t cmd,
     const uint8_t* data,
     uint8_t data_length,
@@ -54,7 +54,7 @@ void mhz19_uart_send_arbitrary_command(
  * 
  * @param command Pointer to the command buffer of size 9 bytes.
  */
-void mhz19_uart_read_co2(uint8_t* command);
+void mh_z19_uart_read_co2(uint8_t* command);
 
 /**
  * @brief Prepare command to calibrate zero point.
@@ -63,7 +63,7 @@ void mhz19_uart_read_co2(uint8_t* command);
  * 
  * @param command Pointer to the command buffer of size 9 bytes.
  */
-void mhz19_uart_calibrate_zero(uint8_t* command);
+void mh_z19_uart_calibrate_zero(uint8_t* command);
 
 /**
  * @brief Prepare command to calibrate span point.
@@ -75,7 +75,7 @@ void mhz19_uart_calibrate_zero(uint8_t* command);
  * @param value Span calibration value.
  * @param command Pointer to the command buffer of size 9 bytes.
  */
-void mhz19_uart_calibrate_span(uint16_t value, uint8_t* command);
+void mh_z19_uart_calibrate_span(uint16_t value, uint8_t* command);
 
 /**
  * @brief Prepare command to enable or disable auto-calibration.
@@ -85,7 +85,7 @@ void mhz19_uart_calibrate_span(uint16_t value, uint8_t* command);
  * @param enable Boolean value to enable (true) or disable (false) auto-calibration.
  * @param command Pointer to the command buffer of size 9 bytes.
  */
-void mhz19_uart_set_autocalibration(bool enable, uint8_t* command);
+void mh_z19_uart_set_autocalibration(bool enable, uint8_t* command);
 
 /**
  * @brief Prepare command to switch detection range.
@@ -93,7 +93,7 @@ void mhz19_uart_set_autocalibration(bool enable, uint8_t* command);
  * @param range Detection range value (either 2000ppm or 5000ppm).
  * @param command Pointer to the command buffer of size 9 bytes.
  */
-void mhz19_uart_switch_detection_range(MhZ19DetectionRange range, uint8_t* command);
+void mh_z19_uart_switch_detection_range(MhZ19DetectionRange range, uint8_t* command);
 
 /**
  * @brief Decode CO2 concentration from received data.
@@ -101,7 +101,7 @@ void mhz19_uart_switch_detection_range(MhZ19DetectionRange range, uint8_t* comma
  * @param data Pointer to the received data of size 9 bytes.
  * @return int16_t Decoded CO2 concentration. Returns -1 for invalid command and -2 for invalid checksum.
  */
-int16_t mhz19_decode_co2_concentration(const uint8_t* data);
+int16_t mh_z19_decode_co2_concentration(const uint8_t* data);
 
 #ifdef __cplusplus
 }
