@@ -26,6 +26,6 @@ typedef enum WorkerEventFlags {
     WorkerEventStop = (1 << 1),
 } WorkerEventFlags;
 
-HelloWorldContext* hello_world_app_context_init();
-void hello_world_app_context_free(HelloWorldContext* context);
-int32_t hello_world_app(void* p);
+HelloWorldContext* mh_z19_app_context_init();
+void mh_z19_app_context_free(HelloWorldContext* context);
+int32_t mh_z19_app(void* p);
