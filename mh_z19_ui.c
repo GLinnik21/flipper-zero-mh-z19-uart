@@ -1,13 +1,13 @@
 #include "mh_z19_ui.h"
 
-void input_callback(InputEvent* event, void* context) {
+void mh_z19_app_input_callback(InputEvent* event, void* context) {
     furi_assert(context);
     MhZ19App* app = context;
 
     furi_message_queue_put(app->event_queue, event, FuriWaitForever);
 }
 
-void draw_callback(Canvas* canvas, void* context) {
+void mh_z19_app_draw_callback(Canvas* canvas, void* context) {
     furi_assert(context);
 
     MhZ19App* app = context;

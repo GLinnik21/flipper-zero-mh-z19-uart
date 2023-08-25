@@ -28,6 +28,6 @@ typedef enum MhZ19WorkerEventFlags {
     WorkerEventStop = (1 << 1),
 } MhZ19WorkerEventFlags;
 
-MhZ19App* mh_z19_app_context_init();
-void mh_z19_app_context_free(MhZ19App* context);
+MhZ19App* mh_z19_app_init();
+void mh_z19_app_free(MhZ19App* context);
 int32_t mh_z19_app(void* p);

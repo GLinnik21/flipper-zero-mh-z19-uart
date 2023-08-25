@@ -4,20 +4,20 @@
 
 #include "mh_z19_uart_tools.h"
 
-void uart_init(MhZ19App* app) {
+void mh_z19_app_uart_init(MhZ19App* app) {
     app->uart_state = MhZ19UartStateWaitStart;
     furi_hal_console_disable();
     furi_hal_uart_deinit((app->uart_channel = FuriHalUartIdUSART1));
     furi_hal_uart_init(app->uart_channel, MH_Z19_BAUDRATE);
-    furi_hal_uart_set_irq_cb(app->uart_channel, uart_callback, app);
+    furi_hal_uart_set_irq_cb(app->uart_channel, mh_z19_app_uart_callback, app);
 }
 
-void uart_deinit(MhZ19App* app) {
+void mh_z19_app_uart_deinit(MhZ19App* app) {
     furi_hal_console_enable();
     furi_hal_uart_deinit(app->uart_channel);
 }
 
-void uart_callback(UartIrqEvent event, uint8_t data, void* context) {
+void mh_z19_app_uart_callback(UartIrqEvent event, uint8_t data, void* context) {
     furi_assert(context);
     MhZ19App* app = context;
 
@@ -50,7 +50,7 @@ void uart_callback(UartIrqEvent event, uint8_t data, void* context) {
     }
 }
 
-int32_t uart_listener_worker(void* context) {
+int32_t mh_z19_app_uart_listener_worker(void* context) {
     MhZ19App* app = context;
     static uint8_t data[9] = {0};
     static size_t length = 0;

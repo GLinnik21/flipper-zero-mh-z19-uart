@@ -36,26 +36,26 @@ static void mh_z19_app_run(MhZ19App* const context) {
     }
 }
 
-MhZ19App* mh_z19_app_context_init() {
+MhZ19App* mh_z19_app_init() {
     MhZ19App* context = (MhZ19App*)malloc(sizeof(MhZ19App));
 
     context->event_queue = furi_message_queue_alloc(8, sizeof(InputEvent));
 
     context->view_port = view_port_alloc();
-    view_port_draw_callback_set(context->view_port, draw_callback, context);
-    view_port_input_callback_set(context->view_port, input_callback, context);
+    view_port_draw_callback_set(context->view_port, mh_z19_app_draw_callback, context);
+    view_port_input_callback_set(context->view_port, mh_z19_app_input_callback, context);
 
     context->gui = furi_record_open(RECORD_GUI);
     gui_add_view_port(context->gui, context->view_port, GuiLayerFullscreen);
 
-    uart_init(context);
+    mh_z19_app_uart_init(context);
 
     context->rx_stream = furi_stream_buffer_alloc(126, 1);
 
     context->mutex = furi_mutex_alloc(FuriMutexTypeNormal);
 
     context->worker_thread =
-        furi_thread_alloc_ex("UARTListenerWorker", 1024, uart_listener_worker, context);
+        furi_thread_alloc_ex("UARTListenerWorker", 1024, mh_z19_app_uart_listener_worker, context);
     furi_thread_start(context->worker_thread);
 
     context->ppm = 0;
@@ -63,7 +63,7 @@ MhZ19App* mh_z19_app_context_init() {
     return context;
 }
 
-void mh_z19_app_context_free(MhZ19App* context) {
+void mh_z19_app_free(MhZ19App* context) {
     furi_thread_flags_set(furi_thread_get_id(context->worker_thread), WorkerEventStop);
     furi_thread_join(context->worker_thread);
     furi_thread_free(context->worker_thread);
@@ -72,7 +72,7 @@ void mh_z19_app_context_free(MhZ19App* context) {
 
     furi_stream_buffer_free(context->rx_stream);
 
-    uart_deinit(context);
+    mh_z19_app_uart_deinit(context);
 
     furi_record_close(RECORD_GUI);
 
@@ -87,9 +87,9 @@ void mh_z19_app_context_free(MhZ19App* context) {
 int32_t mh_z19_app(void* p) {
     UNUSED(p);
 
-    MhZ19App* context = mh_z19_app_context_init();
+    MhZ19App* context = mh_z19_app_init();
     mh_z19_app_run(context);
-    mh_z19_app_context_free(context);
+    mh_z19_app_free(context);
 
     return 0;
 }
