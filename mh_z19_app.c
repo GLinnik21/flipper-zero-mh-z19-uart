@@ -3,7 +3,7 @@
 #include <furi_hal_uart.h>
 #include <furi_hal_console.h>
 
-#include "mh_z19_app.h"
+#include "mh_z19_app_i.h"
 #include "mh_z19_ui.h"
 #include "mh_z19_uart.h"
 
