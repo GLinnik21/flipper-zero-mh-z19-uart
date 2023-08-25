@@ -13,5 +13,5 @@ App(
     fap_description="Read the CO2 concentration from the MH-Z19 sensor via UART interface",
     fap_author="glinnik21",
     fap_weburl="https://github.com/GLinnik21/flipper-zero-mh-z19-uart",
-    fap_version=(0, 1)
+    fap_version=(0, 2)
 )
