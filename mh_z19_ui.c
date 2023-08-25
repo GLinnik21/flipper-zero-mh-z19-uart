@@ -1,5 +1,7 @@
 #include "mh_z19_ui.h"
 
+#include "mh_z19_app_i.h"
+
 void mh_z19_app_input_callback(InputEvent* event, void* context) {
     furi_assert(context);
     MhZ19App* app = context;

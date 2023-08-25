@@ -1,7 +1,7 @@
 #include "mh_z19_uart.h"
-#include <furi_hal_uart.h>
 #include <furi_hal_console.h>
 
+#include "mh_z19_app_i.h"
 #include "mh_z19_uart_tools.h"
 
 void mh_z19_app_uart_init(MhZ19App* app) {
