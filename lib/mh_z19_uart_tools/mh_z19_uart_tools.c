@@ -80,11 +80,11 @@ void mh_z19_uart_switch_detection_range(MhZ19DetectionRange range, uint8_t* comm
 }
 
 int16_t mh_z19_decode_co2_concentration(const uint8_t* data) {
-    if(data[1] != MhZ19UartCommandCO2Concentraion) {
-        return -1; // Invalid command
-    }
     if(data[8] != mh_z19_uart_checksum(data)) {
         return -2; // Invalid checksum
+    }
+    if(data[1] != MhZ19UartCommandCO2Concentraion) {
+        return -1; // Invalid command
     }
     return (data[2] << 8) | data[3];
 }
