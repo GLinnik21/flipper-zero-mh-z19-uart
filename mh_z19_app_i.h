@@ -21,6 +21,8 @@ struct MhZ19App {
     FuriMutex* mutex;
     FuriThread* worker_thread;
     uint32_t ppm;
+    bool otg_was_previously_enabled;
+    bool is_5V_enabled;
 };
 
 typedef enum MhZ19WorkerEventFlags {

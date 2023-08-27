@@ -1,18 +1,35 @@
 #include "mh_z19_uart.h"
 #include <furi_hal_console.h>
+#include <furi_hal_power.h>
 
 #include "mh_z19_app_i.h"
 #include "mh_z19_uart_tools.h"
 
+static void mh_z19_app_uart_enable_5V(MhZ19App* app) {
+    app->otg_was_previously_enabled = furi_hal_power_is_otg_enabled();
+    furi_hal_power_enable_otg();
+    app->is_5V_enabled = furi_hal_power_is_otg_enabled() || furi_hal_power_is_charging();
+}
+
+static void mh_z19_app_uart_restore_5V_state(MhZ19App* app) {
+    if(app->is_5V_enabled && !app->otg_was_previously_enabled) {
+        furi_hal_power_disable_otg();
+    }
+}
+
 void mh_z19_app_uart_init(MhZ19App* app) {
     app->uart_state = MhZ19UartStateWaitStart;
     furi_hal_console_disable();
+
+    mh_z19_app_uart_enable_5V(app);
+
     furi_hal_uart_deinit((app->uart_channel = FuriHalUartIdUSART1));
     furi_hal_uart_init(app->uart_channel, MH_Z19_BAUDRATE);
     furi_hal_uart_set_irq_cb(app->uart_channel, mh_z19_app_uart_callback, app);
 }
 
 void mh_z19_app_uart_deinit(MhZ19App* app) {
+    mh_z19_app_uart_restore_5V_state(app);
     furi_hal_console_enable();
     furi_hal_uart_deinit(app->uart_channel);
 }
