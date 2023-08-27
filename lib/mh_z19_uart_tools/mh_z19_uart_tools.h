@@ -11,6 +11,14 @@ extern "C" {
 #define MH_Z19_COMMAND_SIZE (9U)
 #define MH_Z19_START_BYTE (0xFFU)
 
+/**
+ * @brief Interval for polling MH-Z19 sensor (in ms).
+ * 
+ * Set to 2 minutes based on the sensor's T90 response time (< 120s).
+ * Ensures stable, accurate readings while optimizing resource use.
+ */
+#define MH_Z19_RECOMMENDED_READ_INTERVAL 120000
+
 typedef enum {
     MhZ19UartCommandCO2Concentraion = 0x86,
     MhZ19UartCommandCalibrateZERO = 0x87,

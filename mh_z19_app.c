@@ -9,28 +9,26 @@
 
 #include "mh_z19_uart_tools.h"
 
+#define MH_Z19_APP_POLL_INTERVAL_MS (5000U) // 5 seconds
+
 static void mh_z19_app_run(MhZ19App* const app) {
     for(bool isRunning = true; isRunning;) {
         InputEvent event;
         const FuriStatus status =
-            furi_message_queue_get(app->event_queue, &event, FuriWaitForever);
-
-        if((status != FuriStatusOk) || (event.type != InputTypeShort)) {
-            continue;
-        }
+            furi_message_queue_get(app->event_queue, &event, MH_Z19_APP_POLL_INTERVAL_MS);
 
         static uint8_t data[9] = {0};
         mh_z19_uart_read_co2(data);
+        furi_hal_uart_tx(app->uart.channel, data, sizeof(data));
 
-        switch(event.key) {
-        case InputKeyBack:
-            isRunning = false;
-            break;
-        case InputKeyOk:
-            furi_hal_uart_tx(app->uart.channel, data, sizeof(data));
-            break;
-        default:
-            break;
+        if((status == FuriStatusOk) && (event.type = InputTypeShort)) {
+            switch(event.key) {
+            case InputKeyBack:
+                isRunning = false;
+                break;
+            default:
+                break;
+            }
         }
         view_port_update(app->gui_data.view_port);
     }
