@@ -11,18 +11,34 @@ typedef enum MhZ19UartState {
     MhZ19UartStateCollectPacket,
 } MhZ19UartState;
 
-struct MhZ19App {
-    FuriMessageQueue* event_queue;
-    ViewPort* view_port;
-    Gui* gui;
-    FuriHalUartId uart_channel;
-    MhZ19UartState uart_state;
+typedef struct MhZ19Uart {
+    FuriHalUartId channel;
+    MhZ19UartState state;
     FuriStreamBuffer* rx_stream;
+} MhZ19Uart;
+
+typedef struct MhZ19ThreadData {
     FuriMutex* mutex;
     FuriThread* worker_thread;
-    uint32_t ppm;
+} MhZ19ThreadData;
+
+typedef struct MhZ19GuiData {
+    ViewPort* view_port;
+    Gui* gui;
+} MhZ19GuiData;
+
+typedef struct MhZ19PowerData {
     bool otg_was_previously_enabled;
     bool is_5V_enabled;
+} MhZ19PowerData;
+
+struct MhZ19App {
+    FuriMessageQueue* event_queue;
+    uint32_t ppm;
+    MhZ19Uart uart;
+    MhZ19ThreadData thread_data;
+    MhZ19GuiData gui_data;
+    MhZ19PowerData power_data;
 };
 
 typedef enum MhZ19WorkerEventFlags {
@@ -31,5 +47,5 @@ typedef enum MhZ19WorkerEventFlags {
 } MhZ19WorkerEventFlags;
 
 MhZ19App* mh_z19_app_init();
-void mh_z19_app_free(MhZ19App* context);
+void mh_z19_app_free(MhZ19App* app);
 int32_t mh_z19_app(void* p);

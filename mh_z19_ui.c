@@ -17,9 +17,9 @@ void mh_z19_app_draw_callback(Canvas* canvas, void* context) {
     canvas_set_font(canvas, FontPrimary);
     static char buffer[50];
 
-    furi_mutex_acquire(app->mutex, FuriWaitForever);
+    furi_mutex_acquire(app->thread_data.mutex, FuriWaitForever);
     snprintf(buffer, sizeof(buffer), "ppm: %lu", app->ppm);
-    furi_mutex_release(app->mutex);
+    furi_mutex_release(app->thread_data.mutex);
 
     canvas_draw_str(canvas, 0, 10, buffer);
 }
