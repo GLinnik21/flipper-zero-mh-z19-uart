@@ -1,6 +1,6 @@
 #pragma once
 
-#include <gui/gui.h>
+#include <gui/canvas.h>
 #include <input/input.h>
 
 void mh_z19_app_draw_callback(Canvas* canvas, void* context);
