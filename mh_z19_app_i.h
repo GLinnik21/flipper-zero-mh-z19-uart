@@ -3,6 +3,7 @@
 #include <furi.h>
 #include <furi_hal_uart.h>
 #include <gui/gui.h>
+#include <gui/scene_manager.h>
 
 #include "mh_z19_app.h"
 
@@ -34,6 +35,7 @@ typedef struct MhZ19PowerData {
 
 struct MhZ19App {
     FuriMessageQueue* event_queue;
+    SceneManager* scene_manager;
     uint32_t ppm;
     MhZ19Uart uart;
     MhZ19ThreadData thread_data;
