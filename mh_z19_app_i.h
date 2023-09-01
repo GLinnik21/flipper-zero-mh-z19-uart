@@ -6,6 +6,7 @@
 #include <gui/scene_manager.h>
 
 #include "mh_z19_app.h"
+#include "scenes/mh_z19_scene.h"
 
 typedef enum MhZ19UartState {
     MhZ19UartStateWaitStart,
@@ -23,11 +24,6 @@ typedef struct MhZ19ThreadData {
     FuriThread* worker_thread;
 } MhZ19ThreadData;
 
-typedef struct MhZ19GuiData {
-    ViewPort* view_port;
-    Gui* gui;
-} MhZ19GuiData;
-
 typedef struct MhZ19PowerData {
     bool otg_was_previously_enabled;
     bool is_5V_enabled;
@@ -36,10 +32,12 @@ typedef struct MhZ19PowerData {
 struct MhZ19App {
     FuriMessageQueue* event_queue;
     SceneManager* scene_manager;
+    ViewPort* view_port;
+    Gui* gui;
+
     uint32_t ppm;
     MhZ19Uart uart;
     MhZ19ThreadData thread_data;
-    MhZ19GuiData gui_data;
     MhZ19PowerData power_data;
 };
 

@@ -31,7 +31,7 @@ static void mh_z19_app_run(MhZ19App* const app) {
                 break;
             }
         }
-        view_port_update(app->gui_data.view_port);
+        view_port_update(app->view_port);
     }
 }
 
@@ -40,13 +40,14 @@ MhZ19App* mh_z19_app_init() {
 
     app->event_queue = furi_message_queue_alloc(8, sizeof(InputEvent));
 
-    app->gui_data.view_port = view_port_alloc();
-    view_port_draw_callback_set(app->gui_data.view_port, mh_z19_app_draw_callback, app);
-    view_port_input_callback_set(app->gui_data.view_port, mh_z19_app_input_callback, app);
     app->scene_manager = scene_manager_alloc(&mh_z19_scene_handlers, app);
 
-    app->gui_data.gui = furi_record_open(RECORD_GUI);
-    gui_add_view_port(app->gui_data.gui, app->gui_data.view_port, GuiLayerFullscreen);
+    app->view_port = view_port_alloc();
+    view_port_draw_callback_set(app->view_port, mh_z19_app_draw_callback, app);
+    view_port_input_callback_set(app->view_port, mh_z19_app_input_callback, app);
+
+    app->gui = furi_record_open(RECORD_GUI);
+    gui_add_view_port(app->gui, app->view_port, GuiLayerFullscreen);
 
     mh_z19_app_uart_init(app);
 
@@ -76,8 +77,9 @@ void mh_z19_app_free(MhZ19App* app) {
 
     furi_record_close(RECORD_GUI);
 
-    gui_remove_view_port(app->gui_data.gui, app->gui_data.view_port);
-    view_port_free(app->gui_data.view_port);
+    gui_remove_view_port(app->gui, app->view_port);
+    view_port_free(app->view_port);
+
     scene_manager_free(app->scene_manager);
 
     furi_message_queue_free(app->event_queue);
