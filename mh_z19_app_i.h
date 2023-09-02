@@ -4,6 +4,7 @@
 #include <furi_hal_uart.h>
 #include <gui/gui.h>
 #include <gui/scene_manager.h>
+#include <gui/view_dispatcher.h>
 
 #include "mh_z19_app.h"
 #include "scenes/mh_z19_scene.h"
@@ -32,6 +33,7 @@ typedef struct MhZ19PowerData {
 struct MhZ19App {
     FuriMessageQueue* event_queue;
     SceneManager* scene_manager;
+    ViewDispatcher* view_dispatcher;
     ViewPort* view_port;
     Gui* gui;
 

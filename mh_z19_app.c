@@ -41,6 +41,8 @@ MhZ19App* mh_z19_app_init() {
     app->event_queue = furi_message_queue_alloc(8, sizeof(InputEvent));
 
     app->scene_manager = scene_manager_alloc(&mh_z19_scene_handlers, app);
+    app->view_dispatcher = view_dispatcher_alloc();
+    view_dispatcher_enable_queue(app->view_dispatcher);
 
     app->view_port = view_port_alloc();
     view_port_draw_callback_set(app->view_port, mh_z19_app_draw_callback, app);
@@ -82,6 +84,7 @@ void mh_z19_app_free(MhZ19App* app) {
 
     scene_manager_free(app->scene_manager);
 
+    view_dispatcher_free(app->view_dispatcher);
     furi_message_queue_free(app->event_queue);
 
     free(app);
