@@ -2,26 +2,28 @@
 
 #include <gui/scene_manager.h>
 
+// Generate scene id and total number
+#define ADD_SCENE(prefix, name, id) MhZ19Scene##id,
+typedef enum {
+#include "mh_z19_scene_config.h"
+    MhZ19SceneCount,
+} MhZ19Scene;
+#undef ADD_SCENE
+
 extern const SceneManagerHandlers mh_z19_scene_handlers;
 
-// For MhZ19AppSceneSetup
-void mh_z19_scene_setup_on_enter(void* context);
-bool mh_z19_scene_setup_on_event(void* context, SceneManagerEvent event);
-void mh_z19_scene_setup_on_exit(void* context);
+// Generate scene on_enter handlers declaration
+#define ADD_SCENE(prefix, name, id) void prefix##_scene_##name##_on_enter(void*);
+#include "mh_z19_scene_config.h"
+#undef ADD_SCENE
 
-// For MhZ19AppSceneMain
-void mh_z19_scene_main_on_enter(void* context);
-bool mh_z19_scene_main_on_event(void* context, SceneManagerEvent event);
-void mh_z19_scene_main_on_exit(void* context);
+// Generate scene on_event handlers declaration
+#define ADD_SCENE(prefix, name, id) \
+    bool prefix##_scene_##name##_on_event(void* context, SceneManagerEvent event);
+#include "mh_z19_scene_config.h"
+#undef ADD_SCENE
 
-// For MhZ19AppSceneMenu
-void mh_z19_scene_menu_on_enter(void* context);
-bool mh_z19_scene_menu_on_event(void* context, SceneManagerEvent event);
-void mh_z19_scene_menu_on_exit(void* context);
-
-typedef enum MhZ19AppScene {
-    MhZ19AppSceneSetup,
-    MhZ19AppSceneMain,
-    MhZ19AppSceneMenu,
-    MhZ19AppSceneCount,
-} MhZ19AppScene;
+// Generate scene on_exit handlers declaration
+#define ADD_SCENE(prefix, name, id) void prefix##_scene_##name##_on_exit(void* context);
+#include "mh_z19_scene_config.h"
+#undef ADD_SCENE
