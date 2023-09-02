@@ -1,6 +1,6 @@
 #include "mh_z19_uart.h"
-#include <furi_hal_console.h>
 #include <furi_hal_power.h>
+#include <furi/core/log.h>
 
 #include "mh_z19_app_i.h"
 #include "mh_z19_uart_tools.h"
@@ -19,7 +19,6 @@ static void mh_z19_app_uart_power_restore(MhZ19PowerData* power_data) {
 
 void mh_z19_app_uart_init(MhZ19App* app) {
     app->uart.state = MhZ19UartStateWaitStart;
-    furi_hal_console_disable();
 
     mh_z19_app_uart_power_enable(&(app->power_data));
 
@@ -30,7 +29,6 @@ void mh_z19_app_uart_init(MhZ19App* app) {
 
 void mh_z19_app_uart_deinit(MhZ19App* app) {
     mh_z19_app_uart_power_restore(&(app->power_data));
-    furi_hal_console_enable();
     furi_hal_uart_deinit(app->uart.channel);
 }
 
@@ -84,6 +82,7 @@ int32_t mh_z19_app_uart_listener_worker(void* context) {
             length = furi_stream_buffer_receive(app->uart.rx_stream, data, MH_Z19_COMMAND_SIZE, 0);
             if(length == MH_Z19_COMMAND_SIZE) {
                 app->ppm = mh_z19_decode_co2_concentration(data);
+                FURI_LOG_I("MH-Z19", "%lu", app->ppm);
             }
             furi_mutex_release(app->thread_data.mutex);
         }

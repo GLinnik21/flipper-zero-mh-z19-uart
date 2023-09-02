@@ -3,8 +3,11 @@
 #include <furi.h>
 #include <furi_hal_uart.h>
 #include <gui/gui.h>
+#include <gui/scene_manager.h>
+#include <gui/view_dispatcher.h>
 
 #include "mh_z19_app.h"
+#include "scenes/mh_z19_scene.h"
 
 typedef enum MhZ19UartState {
     MhZ19UartStateWaitStart,
@@ -22,11 +25,6 @@ typedef struct MhZ19ThreadData {
     FuriThread* worker_thread;
 } MhZ19ThreadData;
 
-typedef struct MhZ19GuiData {
-    ViewPort* view_port;
-    Gui* gui;
-} MhZ19GuiData;
-
 typedef struct MhZ19PowerData {
     bool otg_was_previously_enabled;
     bool is_5V_enabled;
@@ -34,10 +32,14 @@ typedef struct MhZ19PowerData {
 
 struct MhZ19App {
     FuriMessageQueue* event_queue;
+    SceneManager* scene_manager;
+    ViewDispatcher* view_dispatcher;
+    ViewPort* view_port;
+    Gui* gui;
+
     uint32_t ppm;
     MhZ19Uart uart;
     MhZ19ThreadData thread_data;
-    MhZ19GuiData gui_data;
     MhZ19PowerData power_data;
 };
 
