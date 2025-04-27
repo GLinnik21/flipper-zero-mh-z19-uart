@@ -1,5 +1,6 @@
 #include "mh_z19_uart_tools.h"
 
+#include <furi.h>
 #include <string.h>
 
 #define MH_Z19_SENSOR_BYTE (0x01U)
@@ -80,11 +81,42 @@ void mh_z19_uart_switch_detection_range(MhZ19DetectionRange range, uint8_t* comm
 }
 
 int16_t mh_z19_decode_co2_concentration(const uint8_t* data) {
-    if(data[8] != mh_z19_uart_checksum(data)) {
-        return -2; // Invalid checksum
+    // Debug the received packet
+    FURI_LOG_D(
+        "MH-Z19",
+        "Packet: %02X %02X %02X %02X %02X %02X %02X %02X %02X", 
+        data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8]);
+    
+    // Check for valid packet format
+    if(data[0] != MH_Z19_START_BYTE) {
+        FURI_LOG_E("MH-Z19", "Invalid start byte: %02X, expected %02X", data[0], MH_Z19_START_BYTE);
+        return -3; // Invalid start byte
     }
+    
+    // For CO2 reading responses, byte 1 should be the command code 0x86
     if(data[1] != MhZ19UartCommandCO2Concentraion) {
+        FURI_LOG_E("MH-Z19", "Invalid command byte: %02X, expected %02X", data[1], MhZ19UartCommandCO2Concentraion);
         return -1; // Invalid command
     }
-    return (data[2] << 8) | data[3];
+    
+    // Calculate and verify checksum
+    uint8_t calculated_checksum = mh_z19_uart_checksum(data);
+    if(data[8] != calculated_checksum) {
+        FURI_LOG_E("MH-Z19", "Checksum mismatch: %02X != %02X", data[8], calculated_checksum);
+        return -2; // Invalid checksum
+    }
+    
+    // According to MH-Z19 datasheet, response format for CO2 reading is:
+    // Byte 0: 0xFF (start byte)
+    // Byte 1: 0x86 (command - same as request)
+    // Byte 2: High byte of CO2 value
+    // Byte 3: Low byte of CO2 value
+    // Byte 4-7: Other data
+    // Byte 8: Checksum
+    
+    // CO2 value is in high byte (data[2]) and low byte (data[3])
+    uint16_t co2_value = (data[2] << 8) | data[3];
+    FURI_LOG_I("MH-Z19", "Decoded CO2: %d ppm", co2_value);
+    
+    return co2_value;
 }

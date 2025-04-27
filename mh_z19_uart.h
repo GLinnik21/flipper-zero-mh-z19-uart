@@ -1,7 +1,7 @@
 #pragma once
 
 #include <furi_hal_serial.h>
-#include "mh_z19_app.h"
+#include "mh_z19_app_i.h"
 
 void mh_z19_app_uart_callback(
     FuriHalSerialHandle* handle,
@@ -10,3 +10,4 @@ void mh_z19_app_uart_callback(
 int32_t mh_z19_app_uart_listener_worker(void* context);
 void mh_z19_app_uart_init(MhZ19App* app);
 void mh_z19_app_uart_deinit(MhZ19App* app);
+void mh_z19_app_uart_check_power(MhZ19PowerData* power_data);

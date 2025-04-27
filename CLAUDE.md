@@ -62,3 +62,28 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Recommended stack size: 1-2 KB for most applications
 - Use the FuriHal* APIs for hardware interaction
 - Follow event-driven programming model with message queues
+
+## GUI and Scene Management
+- Use scene-based approach for multi-screen applications
+- Key components:
+  - `SceneManager`: Manages scenes and transitions between them
+  - `ViewDispatcher`: Manages views and connects them to the GUI
+  - `View`: Individual UI screens with draw and input callbacks
+- Scene structure:
+  - Define scene IDs in an enum (e.g., `MhZ19SceneMain`, `MhZ19SceneAlert`)
+  - Implement on_enter, on_event, and on_exit handlers for each scene
+  - Create handler arrays for each type of callback
+  - Register handlers with the scene manager
+- View implementation:
+  - Create dedicated view types for each screen
+  - Use view_allocate_model for storing view data
+  - Implement draw and input callbacks
+  - Use with_view_model for updating view data
+- Event handling:
+  - Use custom events for scene-specific actions
+  - Handle navigation events (back button) for scene transitions
+  - Use tick events for periodic updates (sensor reads, UI refreshes)
+- Power management:
+  - Use furi_hal_power functions for managing 5V power
+  - Check power status regularly in tick callback
+  - Handle power state changes appropriately
