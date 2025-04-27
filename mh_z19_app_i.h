@@ -1,7 +1,7 @@
 #pragma once
 
 #include <furi.h>
-#include <furi_hal_uart.h>
+#include <furi_hal_serial.h>
 #include <gui/gui.h>
 
 #include "mh_z19_app.h"
@@ -12,7 +12,7 @@ typedef enum MhZ19UartState {
 } MhZ19UartState;
 
 typedef struct MhZ19Uart {
-    FuriHalUartId channel;
+    FuriHalSerialHandle* handle;
     MhZ19UartState state;
     FuriStreamBuffer* rx_stream;
 } MhZ19Uart;

@@ -1,6 +1,6 @@
 #include "mh_z19_uart.h"
-#include <furi_hal_console.h>
 #include <furi_hal_power.h>
+#include <furi_hal.h>
 
 #include "mh_z19_app_i.h"
 #include "mh_z19_uart_tools.h"
@@ -19,26 +19,47 @@ static void mh_z19_app_uart_power_restore(MhZ19PowerData* power_data) {
 
 void mh_z19_app_uart_init(MhZ19App* app) {
     app->uart.state = MhZ19UartStateWaitStart;
-    furi_hal_console_disable();
 
     mh_z19_app_uart_power_enable(&(app->power_data));
 
-    furi_hal_uart_deinit((app->uart.channel = FuriHalUartIdUSART1));
-    furi_hal_uart_init(app->uart.channel, MH_Z19_BAUDRATE);
-    furi_hal_uart_set_irq_cb(app->uart.channel, mh_z19_app_uart_callback, app);
+    // Get handle for the standard USART port (USART1 = FuriHalSerialIdUsart)
+    app->uart.handle = furi_hal_serial_control_acquire(FuriHalSerialIdUsart);
+
+    if(app->uart.handle) {
+        // Initialize serial with MH-Z19 baudrate
+        furi_hal_serial_init(app->uart.handle, MH_Z19_BAUDRATE);
+
+        // Start async RX with our callback
+        furi_hal_serial_async_rx_start(app->uart.handle, mh_z19_app_uart_callback, app, true);
+    }
 }
 
 void mh_z19_app_uart_deinit(MhZ19App* app) {
+    if(app->uart.handle) {
+        // Stop async RX
+        furi_hal_serial_async_rx_stop(app->uart.handle);
+
+        // Deinitialize serial
+        furi_hal_serial_deinit(app->uart.handle);
+
+        // Release the serial handle
+        furi_hal_serial_control_release(app->uart.handle);
+        app->uart.handle = NULL;
+    }
+
     mh_z19_app_uart_power_restore(&(app->power_data));
-    furi_hal_console_enable();
-    furi_hal_uart_deinit(app->uart.channel);
 }
 
-void mh_z19_app_uart_callback(UartIrqEvent event, uint8_t data, void* context) {
+void mh_z19_app_uart_callback(
+    FuriHalSerialHandle* handle,
+    FuriHalSerialRxEvent event,
+    void* context) {
     furi_assert(context);
     MhZ19App* app = context;
 
-    if(event == UartIrqEventRXNE) {
+    if(event == FuriHalSerialRxEventData && furi_hal_serial_async_rx_available(handle)) {
+        uint8_t data = furi_hal_serial_async_rx(handle);
+
         switch(app->uart.state) {
         case MhZ19UartStateWaitStart:
             if(data == MH_Z19_START_BYTE) {

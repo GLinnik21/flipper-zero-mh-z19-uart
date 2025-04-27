@@ -1,7 +1,6 @@
 
 #include <gui/gui.h>
-#include <furi_hal_uart.h>
-#include <furi_hal_console.h>
+#include <furi_hal_serial.h>
 
 #include "mh_z19_app_i.h"
 #include "mh_z19_ui.h"
@@ -19,7 +18,7 @@ static void mh_z19_app_run(MhZ19App* const app) {
 
         static uint8_t data[9] = {0};
         mh_z19_uart_read_co2(data);
-        furi_hal_uart_tx(app->uart.channel, data, sizeof(data));
+        furi_hal_serial_tx(app->uart.handle, data, sizeof(data));
 
         if((status == FuriStatusOk) && (event.type = InputTypeShort)) {
             switch(event.key) {
@@ -46,14 +45,16 @@ MhZ19App* mh_z19_app_init() {
     app->gui_data.gui = furi_record_open(RECORD_GUI);
     gui_add_view_port(app->gui_data.gui, app->gui_data.view_port, GuiLayerFullscreen);
 
-    mh_z19_app_uart_init(app);
-
     app->uart.rx_stream = furi_stream_buffer_alloc(126, 1);
 
     app->thread_data.mutex = furi_mutex_alloc(FuriMutexTypeNormal);
 
     app->thread_data.worker_thread =
         furi_thread_alloc_ex("UARTListenerWorker", 1024, mh_z19_app_uart_listener_worker, app);
+
+    // Initialize UART after we've set up the stream buffer
+    mh_z19_app_uart_init(app);
+
     furi_thread_start(app->thread_data.worker_thread);
 
     app->ppm = 0;
