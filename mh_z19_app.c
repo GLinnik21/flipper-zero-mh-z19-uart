@@ -29,11 +29,11 @@ static void mh_z19_app_tick_event_callback(void* context) {
 
     uint32_t current_time = furi_get_tick();
 
-    // We're removing the warmup period since it doesn't affect sensor readings
+    // Immediately mark the sensor as ready to use
     if(app->sensor_data.is_warming_up) {
         app->sensor_data.is_warming_up = false;
         mh_z19_main_view_set_warming_up(app->main_view, false, 0, 0);
-        FURI_LOG_I("MH-Z19", "Skipping warmup waiting");
+        FURI_LOG_I("MH-Z19", "Sensor ready for use");
     }
 
     // Send CO2 read command every interval
@@ -41,11 +41,20 @@ static void mh_z19_app_tick_event_callback(void* context) {
     static uint32_t last_read_time = 0;
 
     if(current_time - last_read_time > MH_Z19_APP_POLL_INTERVAL_MS) {
-        // Only send command if UART is initialized and 5V power is available
         if(app->uart.handle != NULL && app->power_data.is_5V_enabled) {
+            // Prepare and send CO2 reading command
             mh_z19_uart_read_co2(data);
             furi_hal_serial_tx(app->uart.handle, data, sizeof(data));
-            FURI_LOG_D("MH-Z19", "Sent CO2 read command");
+            
+            FURI_LOG_I("MH-Z19", "Sent CO2 read command: %02X %02X %02X %02X %02X %02X %02X %02X %02X", 
+                data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8]);
+        } else {
+            if(app->uart.handle == NULL) {
+                FURI_LOG_W("MH-Z19", "Cannot send command: UART not initialized");
+            }
+            if(!app->power_data.is_5V_enabled) {
+                FURI_LOG_W("MH-Z19", "Cannot send command: 5V power is OFF");
+            }
         }
         last_read_time = current_time;
     }

@@ -82,9 +82,9 @@ void mh_z19_uart_switch_detection_range(MhZ19DetectionRange range, uint8_t* comm
 
 int16_t mh_z19_decode_co2_concentration(const uint8_t* data) {
     // Debug the received packet
-    FURI_LOG_D(
+    FURI_LOG_I(
         "MH-Z19",
-        "Packet: %02X %02X %02X %02X %02X %02X %02X %02X %02X", 
+        "Received: %02X %02X %02X %02X %02X %02X %02X %02X %02X", 
         data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8]);
     
     // Check for valid packet format
