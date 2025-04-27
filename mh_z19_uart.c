@@ -21,7 +21,7 @@ static void mh_z19_app_uart_power_restore(MhZ19PowerData* power_data) {
 void mh_z19_app_uart_check_power(MhZ19PowerData* power_data) {
     bool was_enabled = power_data->is_5V_enabled;
     power_data->is_5V_enabled = furi_hal_power_is_otg_enabled() || furi_hal_power_is_charging();
-    
+
     if(was_enabled != power_data->is_5V_enabled) {
         FURI_LOG_I("MH-Z19", "5V power changed: %s", power_data->is_5V_enabled ? "ON" : "OFF");
     }
@@ -69,7 +69,7 @@ void mh_z19_app_uart_callback(
         FURI_LOG_E("MH-Z19", "UART callback with NULL context");
         return;
     }
-    
+
     MhZ19App* app = context;
 
     if(!app->power_data.is_5V_enabled) {
@@ -105,9 +105,9 @@ void mh_z19_app_uart_callback(
                 furi_stream_buffer_reset(app->uart.rx_stream);
                 furi_stream_buffer_send(app->uart.rx_stream, &data, 1, 0);
                 furi_mutex_release(app->thread_data.mutex);
-            }
-            else if(byte_count == MH_Z19_COMMAND_SIZE) {
-                FURI_LOG_I("MH-Z19", "Complete packet received (%d bytes), processing", byte_count);
+            } else if(byte_count == MH_Z19_COMMAND_SIZE) {
+                FURI_LOG_I(
+                    "MH-Z19", "Complete packet received (%d bytes), processing", byte_count);
                 furi_thread_flags_set(
                     furi_thread_get_id(app->thread_data.worker_thread), WorkerEventReserved);
                 app->uart.state = MhZ19UartStateWaitStart;
@@ -116,8 +116,10 @@ void mh_z19_app_uart_callback(
         }
     } else if(event == FuriHalSerialRxEventIdle) {
         FURI_LOG_D("MH-Z19", "UART idle event");
-    } else if(event == FuriHalSerialRxEventError) {
-        FURI_LOG_E("MH-Z19", "UART error event");
+    } else if(
+        event & (FuriHalSerialRxEventFrameError | FuriHalSerialRxEventNoiseError |
+                 FuriHalSerialRxEventOverrunError | FuriHalSerialRxEventParityError)) {
+        FURI_LOG_E("MH-Z19", "UART error event: 0x%02X", event);
     }
 }
 
@@ -131,15 +133,15 @@ int32_t mh_z19_app_uart_listener_worker(void* context) {
     while(1) {
         uint32_t flags = furi_thread_flags_wait(
             WorkerEventStop | WorkerEventReserved, FuriFlagWaitAny, FuriWaitForever);
-        
+
         if(flags & WorkerEventStop) {
             FURI_LOG_I("MH-Z19", "UART listener worker stopping");
             break;
         }
-        
+
         if(flags & WorkerEventReserved) {
             FURI_LOG_D("MH-Z19", "Processing received packet");
-            
+
             furi_mutex_acquire(app->thread_data.mutex, FuriWaitForever);
             length = furi_stream_buffer_receive(app->uart.rx_stream, data, MH_Z19_COMMAND_SIZE, 0);
             furi_mutex_release(app->thread_data.mutex);
@@ -171,7 +173,8 @@ int32_t mh_z19_app_uart_listener_worker(void* context) {
                     FURI_LOG_E("MH-Z19", "❌ CO2 decode failed: %s (%d)", error_msg, ppm_value);
                 }
             } else {
-                FURI_LOG_E("MH-Z19", "❌ Incomplete packet received: %d bytes instead of 9", length);
+                FURI_LOG_E(
+                    "MH-Z19", "❌ Incomplete packet received: %d bytes instead of 9", length);
             }
         }
     }

@@ -45,9 +45,19 @@ static void mh_z19_app_tick_event_callback(void* context) {
             // Prepare and send CO2 reading command
             mh_z19_uart_read_co2(data);
             furi_hal_serial_tx(app->uart.handle, data, sizeof(data));
-            
-            FURI_LOG_I("MH-Z19", "Sent CO2 read command: %02X %02X %02X %02X %02X %02X %02X %02X %02X", 
-                data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8]);
+
+            FURI_LOG_I(
+                "MH-Z19",
+                "Sent CO2 read command: %02X %02X %02X %02X %02X %02X %02X %02X %02X",
+                data[0],
+                data[1],
+                data[2],
+                data[3],
+                data[4],
+                data[5],
+                data[6],
+                data[7],
+                data[8]);
         } else {
             if(app->uart.handle == NULL) {
                 FURI_LOG_W("MH-Z19", "Cannot send command: UART not initialized");
@@ -121,7 +131,7 @@ MhZ19App* mh_z19_app_init() {
     // Initialize sensor data
     app->ppm = 0;
     app->sensor_data.is_warming_up = false; // Skip warmup waiting
-    
+
     // No need to set warming up view since we're skipping it
 
     // Initialize UART after we've set up the stream buffer

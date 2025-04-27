@@ -35,22 +35,22 @@ static void mh_z19_main_view_draw_callback(Canvas* canvas, void* _model) {
     if(model->is_warming_up) {
         uint32_t elapsed_time_sec = model->elapsed_time_ms / 1000;
         uint32_t remaining_time_sec = (model->warmup_duration_ms / 1000) - elapsed_time_sec;
-        
+
         canvas_set_font(canvas, FontPrimary);
         canvas_draw_str_aligned(canvas, 63, 22, AlignCenter, AlignCenter, "Warming up...");
-        
+
         static char time_buf[20] = {0};
         snprintf(time_buf, sizeof(time_buf), "%lus remaining", remaining_time_sec);
         canvas_draw_str_aligned(canvas, 63, 37, AlignCenter, AlignCenter, time_buf);
-        
+
         // Draw progress bar
         float progress = (float)elapsed_time_sec / (model->warmup_duration_ms / 1000);
         uint8_t bar_width = 100;
         uint8_t filled_width = (uint8_t)(progress * bar_width);
-        
-        canvas_draw_frame(canvas, 64 - (bar_width/2), 47, bar_width, 8);
+
+        canvas_draw_frame(canvas, 64 - (bar_width / 2), 47, bar_width, 8);
         if(filled_width > 0) {
-            canvas_draw_box(canvas, 64 - (bar_width/2), 47, filled_width, 8);
+            canvas_draw_box(canvas, 64 - (bar_width / 2), 47, filled_width, 8);
         }
     } else {
         // Show CO2 ppm value
@@ -137,7 +137,10 @@ void mh_z19_main_view_set_data(MhZ19MainView* main_view, uint32_t ppm) {
 }
 
 void mh_z19_main_view_set_warming_up(
-    MhZ19MainView* main_view, bool is_warming_up, uint32_t elapsed_time_ms, uint32_t warmup_duration_ms) {
+    MhZ19MainView* main_view,
+    bool is_warming_up,
+    uint32_t elapsed_time_ms,
+    uint32_t warmup_duration_ms) {
     furi_assert(main_view);
     with_view_model(
         main_view->view,

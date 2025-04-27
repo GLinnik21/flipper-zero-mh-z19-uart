@@ -7,9 +7,9 @@
 extern "C" {
 #endif
 
-#define MH_Z19_BAUDRATE (9600U)
+#define MH_Z19_BAUDRATE     (9600U)
 #define MH_Z19_COMMAND_SIZE (9U)
-#define MH_Z19_START_BYTE (0xFFU)
+#define MH_Z19_START_BYTE   (0xFFU)
 
 /**
  * @brief Interval for polling MH-Z19 sensor (in ms).
